@@ -1,0 +1,32 @@
+tools:
+  - class_name: "verl.tools.todo_tool.TodoListTool"
+    config:
+      type: native
+      max_items: 100
+      persistent: false
+    tool_schema:
+      type: "function"
+      function:
+        name: "todo_manager"
+        description: "Manage a todo list with the ability to add items, mark them as complete/incomplete, list all items, and remove items."
+        parameters:
+          type: "object"
+          properties:
+            action:
+              type: "string"
+              description: "Action to perform on the todo list."
+              enum: ["add", "complete", "incomplete", "list", "remove", "clear", "search"]
+            item_text:
+              type: "string"
+              description: "Text of the todo item (required for 'add' action)."
+            item_id:
+              type: "string"
+              description: "ID of the todo item (required for 'complete', 'incomplete', 'remove' actions)."
+            priority:
+              type: "string"
+              description: "Priority level for the todo item (optional, defaults to 'medium')."
+              enum: ["low", "medium", "high"]
+            search_query:
+              type: "string"
+              description: "Search query to find todo items (required for 'search' action)."
+          required: ["action"]

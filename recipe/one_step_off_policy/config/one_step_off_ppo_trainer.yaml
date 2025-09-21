@@ -11,4 +11,4 @@ rollout:
   # Number of nodes used in the rollout
   nnodes: 1
   # Number of GPUs per node
-  n_gpus_per_node: 8
+  n_gpus_per_node: 2

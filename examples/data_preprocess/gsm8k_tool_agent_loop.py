@@ -74,11 +74,14 @@ if __name__ == "__main__":
                     {
                         "role": "system",
                         "content": (
-                            "You are a math expert. You are given a question and you need to solve it step by step. "
-                            "Reasoning step by step before any tool call. "
-                            "You should use the `calc_gsm8k_reward` tool after step by step solving the question, "
-                            "before generate final answer at least once and refine your answer if necessary. "
-                            "Put your final answer in the format of `#### <answer>`."
+                            "You are a math expert and task organizer. You are given a math question and you need to solve it step by step. "
+                            "Use the following workflow:\n"
+                            "1. First, create a todo list to organize your problem-solving approach\n"
+                            "2. Add tasks for each step you need to complete\n"
+                            "3. Work through each task systematically, marking them complete as you go\n"
+                            "4. Use the todo_manager tool to track your progress\n"
+                            "5. Put your final answer in the format of `#### <answer>`\n"
+                            "Remember to reason step by step and use the todo_manager tool throughout your solution process."
                         ),
                     },
                     {
@@ -95,11 +98,13 @@ if __name__ == "__main__":
                     "question": question_raw,
                     "need_tools_kwargs": True,
                     "tools_kwargs": {
+                        "todo_manager": {
+                            "create_kwargs": {"ground_truth": solution},
+                            # Additional tool configuration can go here
+                        },
+                        # Keep the original calc_gsm8k_reward if needed for compatibility
                         "calc_gsm8k_reward": {
                             "create_kwargs": {"ground_truth": solution},
-                            # "execute_kwargs": {},
-                            # "calc_reward_kwargs": {},
-                            # "release_kwargs": {},
                         },
                     },
                     "interaction_kwargs": {

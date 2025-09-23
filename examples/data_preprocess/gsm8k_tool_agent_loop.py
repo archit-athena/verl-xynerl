@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Preprocess the GSM8k dataset to parquet format
+Preprocess the GSM8k dataset to parquet format with multi-tool support
 """
 
 import argparse
@@ -71,18 +71,34 @@ if __name__ == "__main__":
                 "data_source": data_source,
                 "agent_name": "tool_agent",
                 "prompt": [
+                    
                     {
                         "role": "system",
-                        "content": (
-                            "You are a math expert and task organizer. You are given a math question and you need to solve it step by step. "
-                            "Use the following workflow:\n"
-                            "1. First, create a todo list to organize your problem-solving approach\n"
-                            "2. Add tasks for each step you need to complete\n"
-                            "3. Work through each task systematically, marking them complete as you go\n"
-                            "4. Use the todo_manager tool to track your progress\n"
-                            "5. Put your final answer in the format of `#### <answer>`\n"
-                            "Remember to reason step by step and use the todo_manager tool throughout your solution process."
-                        ),
+            "content": 
+                "You are an experienced software engineer working within the VERL codebase. Your role is to systematically analyze, understand, and solve problems using a methodical approach with the available tools.\n\n"
+                
+                "## Your Working Style:\n"
+                "- **Be methodical**: Break complex problems into clear, manageable steps\n"
+                "- **Understand before acting**: Always examine the codebase structure and existing patterns before making changes\n"
+                "- **Document your process**: Use the todo system to track your investigation and implementation steps\n"
+                "- **Verify your work**: Test assumptions and validate solutions using available tools\n"
+                "- **Follow existing conventions**: Respect the codebase's architectural patterns and coding style\n\n"
+                
+                "## Tool Usage Protocol:\n"
+                "1. **Planning Phase**: Use `todo_manager` to create a structured investigation plan\n"
+                "2. **Discovery Phase**: Use `verl_bash` to explore directory structures and `verl_read_file` to examine relevant code\n"
+                "3. **Analysis Phase**: Study existing implementations, understand patterns, identify dependencies\n"
+                "4. **Implementation Phase**: Apply findings systematically, updating your todo list as you progress\n"
+                "5. **Verification Phase**: Test your solution and mark tasks complete\n\n"
+                
+                "## For Math Problems:\n"
+                "Apply the same systematic approach:\n"
+                "- Create a todo list for the problem-solving steps\n"
+                "- Use bash tools for calculations when helpful\n"
+                "- Show your work clearly\n"
+                "- Always provide the final answer in the format: #### <answer>\n\n"
+                
+                "Be thorough, methodical, and professional. Focus on creating maintainable, well-integrated solutions."
                     },
                     {
                         "role": "user",
@@ -98,11 +114,19 @@ if __name__ == "__main__":
                     "question": question_raw,
                     "need_tools_kwargs": True,
                     "tools_kwargs": {
+                        # Todo manager tool for task organization
                         "todo_manager": {
                             "create_kwargs": {"ground_truth": solution},
-                            # Additional tool configuration can go here
                         },
-                        # Keep the original calc_gsm8k_reward if needed for compatibility
+                        # VERL bash tool for calculations and exploration
+                        "bash": {
+                            "create_kwargs": {"ground_truth": solution},
+                        },
+                        # VERL file reader tool for documentation access
+                        "read_file": {
+                            "create_kwargs": {"ground_truth": solution},
+                        },
+                        # Keep the original calc_gsm8k_reward for compatibility
                         "calc_gsm8k_reward": {
                             "create_kwargs": {"ground_truth": solution},
                         },
@@ -127,8 +151,16 @@ if __name__ == "__main__":
     else:
         local_save_dir = args.local_save_dir
 
-    train_dataset.to_parquet(os.path.join(local_save_dir, "train.parquet"))
-    test_dataset.to_parquet(os.path.join(local_save_dir, "test.parquet"))
+    # Ensure the directory exists
+    os.makedirs(os.path.expanduser(local_save_dir), exist_ok=True)
+
+    train_dataset.to_parquet(os.path.join(os.path.expanduser(local_save_dir), "train.parquet"))
+    test_dataset.to_parquet(os.path.join(os.path.expanduser(local_save_dir), "test.parquet"))
+
+    print(f"Dataset preprocessing complete!")
+    print(f"Train dataset: {len(train_dataset)} samples")
+    print(f"Test dataset: {len(test_dataset)} samples")
+    print(f"Saved to: {os.path.expanduser(local_save_dir)}")
 
     if hdfs_dir is not None:
         makedirs(hdfs_dir)

@@ -1,0 +1,116 @@
+# multi_tools_config.yaml
+tools:
+  # Todo List Management Tool
+  - class_name: "verl.tools.todo_tool.TodoListTool"
+    config:
+      type: native
+      max_items: 100
+      persistent: false
+    tool_schema:
+      type: "function"
+      function:
+        name: "todo_manager"
+        description: "Manage a todo list with the ability to add items, mark them as complete/incomplete, list all items, and remove items."
+        parameters:
+          type: "object"
+          properties:
+            action:
+              type: "string"
+              description: "Action to perform on the todo list."
+              enum: ["add", "complete", "incomplete", "list", "remove", "clear", "search"]
+            item_text:
+              type: "string"
+              description: "Text of the todo item (required for 'add' action)."
+            item_id:
+              type: "string"
+              description: "ID of the todo item (required for 'complete', 'incomplete', 'remove' actions)."
+            priority:
+              type: "string"
+              description: "Priority level for the todo item (optional, defaults to 'medium')."
+              enum: ["low", "medium", "high"]
+            search_query:
+              type: "string"
+              description: "Search query to find todo items (required for 'search' action)."
+          required: ["action"]
+
+  # VERL Bash Execution Tool
+  - class_name: "verl.tools.bash_tool.BashTool"
+    config:
+      type: native
+      timeout: 30
+      max_output_length: 10000
+      shell: "/bin/bash"
+      allowed_commands: 
+        - "ls"
+        - "pwd"
+        - "cat"
+        - "grep"
+        - "find"
+        - "head"
+        - "tail"
+        - "wc"
+        - "tree"
+        - "git"
+        - "python3"
+        - "pip"
+        - "cd"
+        - "mkdir"
+        - "touch"
+        - "echo"
+        - "which"
+        - "whoami"
+        - "bc"
+        - "expr"
+        - "awk"
+        - "sort"
+        - "uniq"
+    tool_schema:
+      type: "function"
+      function:
+        name: "bash"
+        description: "Execute bash commands in the VERL project directory. Returns command output or error messages."
+        parameters:
+          type: "object"
+          properties:
+            command:
+              type: "string"
+              description: "The bash command to execute."
+            timeout:
+              type: "integer"
+              description: "Timeout for command execution in seconds (optional, defaults to 30)."
+          required: ["command"]
+
+  # VERL File Reader Tool
+  - class_name: "verl.tools.readfile_tool.FileReaderTool"
+    config:
+      type: native
+      max_file_size: 10485760  # 10MB
+      max_lines: 10000
+      allowed_extensions: 
+        - ".py"
+        - ".md"
+        - ".txt"
+        - ".yaml"
+        - ".yml"
+        - ".json"
+        - ".sh"
+        - ".rst"
+        - ".cfg"
+        - ".ini"
+        - ".toml"
+        - ".log"
+    tool_schema:
+      type: "function"
+      function:
+        name: "read_file"
+        description: "Read files from the VERL project directory using relative paths. Can read specific number of lines from the beginning of the file."
+        parameters:
+          type: "object"
+          properties:
+            filepath:
+              type: "string"
+              description: "Relative path to the file from VERL_PWD (e.g., 'verl/tools/base_tool.py', 'README.md')"
+            num_lines:
+              type: "integer"
+              description: "Number of lines to read from the beginning of the file (optional, defaults to entire file)"
+          required: ["filepath"]

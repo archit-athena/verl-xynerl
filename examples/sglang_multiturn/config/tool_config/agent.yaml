@@ -68,7 +68,7 @@ tools:
       type: "function"
       function:
         name: "bash"
-        description: "Execute bash commands in the VERL project directory. Returns command output or error messages."
+        description: "Execute bash commands in the hyperswitch (pwd) project directory. Returns command output or error messages."
         parameters:
           type: "object"
           properties:
@@ -103,13 +103,13 @@ tools:
       type: "function"
       function:
         name: "read_file"
-        description: "Read files from the VERL project directory using relative paths. Can read specific number of lines from the beginning of the file."
+        description: "Read files from the hyperswitch project directory using relative paths. Can read specific number of lines from the beginning of the file."
         parameters:
           type: "object"
           properties:
             filepath:
               type: "string"
-              description: "Relative path to the file from VERL_PWD (e.g., 'verl/tools/base_tool.py', 'README.md')"
+              description: "Relative path to the file from hyperswitch (e.g., 'hyperswitch/tools/base_tool.py', 'README.md')"
             num_lines:
               type: "integer"
               description: "Number of lines to read from the beginning of the file (optional, defaults to entire file)"

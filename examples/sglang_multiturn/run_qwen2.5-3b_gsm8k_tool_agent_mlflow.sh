@@ -8,7 +8,7 @@ ulimit -n 65535
 PROJECT_DIR="$(pwd)"
 CONFIG_PATH="$PROJECT_DIR/examples/sglang_multiturn/config"
 #git clone https://github.com/juspay/hyperswitch
-ENV_DIR="$(pwd)/hyperswitch"
+ENV_DIR="/workspace/hyperswitch"
 VERL_PWD="/workspace/hyperswitch"
 source /workspace/archit2/verl/.venv/bin/activate
 python3 -m verl.trainer.main_ppo \
@@ -47,7 +47,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.critic_warmup=0 \
     trainer.logger='["wandb"]' \
     trainer.project_name='cc_agent_2' \
-    trainer.experiment_name='qwen2.5-3b_function_rm-gsm8k-sgl-tool-agent-verify-n16' \
+    trainer.experiment_name='qwen2.5-3b_function_rm-gsm8k-sgl-tool-agent-verify-new' \
     trainer.n_gpus_per_node=2 \
     trainer.nnodes=1 \
     trainer.save_freq=-1 \

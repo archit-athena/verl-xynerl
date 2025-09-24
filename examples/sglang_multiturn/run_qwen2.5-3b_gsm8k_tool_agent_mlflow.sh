@@ -53,9 +53,9 @@ python3 -m verl.trainer.main_ppo \
     trainer.save_freq=-1 \
     trainer.test_freq=20 \
     custom_reward_function.path="/workspace/archit2/verl/repo_exploration_reward.py" \
-    trainer.total_training_steps=15 \
+    trainer.total_training_steps=25 \
     data.train_files=$HOME/data/repo_exploration/train.parquet \
     data.val_files=$HOME/data/repo_exploration/test.parquet \
     actor_rollout_ref.rollout.multi_turn.tool_config_path="$PROJECT_DIR/examples/sglang_multiturn/config/tool_config/agent.yaml" \
-    trainer.total_epochs=1 $@
+    trainer.total_epochs=5 $@
 

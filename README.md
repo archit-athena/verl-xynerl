@@ -1,6 +1,7 @@
 # Just do 
 
 ```bash
+python3 verl/examples/data_preprocess/gsm8k_tool_agent_loop.py
 bash /workspace/archit2/verl/examples/sglang_multiturn/run_qwen2.5-3b_gsm8k_tool_agent_mlflow.sh
 
 ```

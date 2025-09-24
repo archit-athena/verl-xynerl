@@ -16,8 +16,8 @@ python3 -m verl.trainer.main_ppo \
     --config-name='gsm8k_multiturn_grpo' \
     algorithm.adv_estimator=grpo \
     data.train_batch_size=64 \
-    data.max_prompt_length=4096 \
-    data.max_response_length=4096 \
+    data.max_prompt_length=8194 \
+    data.max_response_length=8194 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
     data.return_raw_chat=True \
@@ -52,6 +52,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.nnodes=1 \
     trainer.save_freq=-1 \
     trainer.test_freq=20 \
+    custom_reward_function.path="/workspace/archit2/verl/repo_exploration_reward.py" \
     trainer.total_training_steps=15 \
     data.train_files=$HOME/data/repo_exploration/train.parquet \
     data.val_files=$HOME/data/repo_exploration/test.parquet \

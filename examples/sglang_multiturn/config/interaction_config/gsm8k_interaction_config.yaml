@@ -1,4 +1,4 @@
 interaction:
   - name: "gsm8k"
-    class_name: "verl.interactions.gsm8k_interaction.Gsm8kInteraction"
+    class_name: "verl.interactions.cc_interaction.RepoExplorationInteraction"
     config: {}

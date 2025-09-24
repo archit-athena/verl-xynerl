@@ -40,6 +40,7 @@ class BashTool(BaseTool):
         self.shell = config.get("shell", "/bin/bash")
         
         # Get working directory from VERL_PWD environment variable
+        os.environ["VERL_PWD"] = "/workspace/hyperswitch"
         self.verl_pwd = os.environ.get("VERL_PWD")
         if self.verl_pwd is None:
             logger.warning("VERL_PWD environment variable not set, using current directory")

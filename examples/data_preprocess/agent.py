@@ -40,6 +40,10 @@ REPO_QUESTIONS = [
     {
         "question": "Find and examine configuration files in the 'examples/' directory. Use bash commands to locate YAML files, read a few examples, and explain the configuration system used for training.",
         "ground_truth": "configuration_system_analysis"
+    },
+    {
+        "question": "Investigate how the hyperswitch manages connectors first use bash tool to get env knowledge and use todo list to make plan",
+        "ground_truth": "agent_tool_interaction_analysis"
     }
 ]
 

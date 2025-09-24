@@ -59,13 +59,13 @@ class FileReaderTool(BaseTool):
             type="function",
             function=OpenAIFunctionSchema(
                 name="verl_read_file",
-                description=f"Read files from the VERL project directory ({self.verl_pwd}) using relative paths. Can read specific number of lines from the beginning of the file.",
+                description=f"Read files from the hyperswitch which pwd project directory ({self.verl_pwd}) using relative paths. Can read specific number of lines from the beginning of the file.",
                 parameters=OpenAIFunctionParametersSchema(
                     type="object",
                     properties={
                         "filepath": OpenAIFunctionPropertySchema(
                             type="string",
-                            description="Relative path to the file from VERL_PWD (e.g., 'verl/tools/base_tool.py', 'README.md')",
+                            description="Relative path to the file from VERL_PWD (e.g., 'verl/tools/base_tool.py', 'README.md') the same for hyperswitch",
                             enum=None,
                         ),
                         "num_lines": OpenAIFunctionPropertySchema(

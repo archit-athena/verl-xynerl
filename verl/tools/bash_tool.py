@@ -62,7 +62,7 @@ class BashTool(BaseTool):
             type="function",
             function=OpenAIFunctionSchema(
                 name="verl_bash",
-                description=f"Execute bash commands in the VERL project directory ({self.verl_pwd}). Returns command output or error messages.",
+                description=f"Execute bash commands in the hyperswitch directory already in the pwd project directory ({self.verl_pwd}). Returns command output or error messages.",
                 parameters=OpenAIFunctionParametersSchema(
                     type="object",
                     properties={
@@ -97,8 +97,8 @@ class BashTool(BaseTool):
                 "successful_commands": 0
             }
         
-        response_text = f"VERL bash tool ready. Working directory: {self.verl_pwd}"
-        logger.debug(f"Created VERL bash tool instance: {instance_id}")
+        response_text = f"bash tool ready. Working directory: {self.verl_pwd}"
+        logger.debug(f"Created bash tool instance: {instance_id}")
         return instance_id, ToolResponse(text=response_text)
 
     @rollout_trace_op

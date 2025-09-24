@@ -34,11 +34,11 @@ REPO_QUESTIONS = [
         "ground_truth": "repository_overview_analysis"
     },
     {
-        "question": "Explore the 'verl/tools/' directory by listing its contents, then read the 'base_tool.py' file to understand the tool system architecture. Explain how tools are implemented in this framework.",
+        "question": "tell me how hyperswitch works and what is the architecture of hyperswitch",
         "ground_truth": "tools_architecture_analysis"
     },
     {
-        "question": "Find and examine configuration files in the 'examples/' directory. Use bash commands to locate YAML files, read a few examples, and explain the configuration system used for training.",
+        "question": "Find and examine configuration files connectors info and summarize how the configuration system is designed and implemented",
         "ground_truth": "configuration_system_analysis"
     },
     {
@@ -73,7 +73,7 @@ if __name__ == "__main__":
                 {
                     "role": "system",
                     "content": (
-                        "You are an experienced software engineer working within the VERL codebase. Your role is to systematically analyze, understand, and solve problems using a methodical approach with the available tools.\n\n"
+                        "You are an experienced software engineer working within the hyperswitch codebase. Your role is to systematically analyze, understand, and solve problems using a methodical approach with the available tools.\n\n"
                         
                         "## Your Working Style:\n"
                         "- **Be methodical**: Break complex problems into clear, manageable steps\n"
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                         
                         "## Tool Usage Protocol:\n"
                         "1. **Planning Phase**: Use `todo_manager` to create a structured investigation plan\n"
-                        "2. **Discovery Phase**: Use `verl_bash` to explore directory structures and `verl_read_file` to examine relevant code\n"
+                        "2. **Discovery Phase**: Use `bash` to explore directory structures and `read_file` to examine relevant code\n"
                         "3. **Analysis Phase**: Study existing implementations, understand patterns, identify dependencies\n"
                         "4. **Implementation Phase**: Apply findings systematically, updating your todo list as you progress\n"
                         "5. **Verification Phase**: Test your solution and mark tasks complete\n\n"

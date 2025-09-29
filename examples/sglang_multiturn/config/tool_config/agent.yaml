@@ -33,7 +33,7 @@ tools:
               description: "Search query to find todo items (required for 'search' action)."
           required: ["action"]
 
-  # VERL Bash Execution Tool
+  # Bash Execution Tool
   - class_name: "verl.tools.bash_tool.BashTool"
     config:
       type: native
@@ -68,7 +68,7 @@ tools:
       type: "function"
       function:
         name: "bash"
-        description: "Execute bash commands in the hyperswitch (pwd) project directory. Returns command output or error messages."
+        description: "Execute bash commands. Returns command output or error messages."
         parameters:
           type: "object"
           properties:
@@ -80,7 +80,7 @@ tools:
               description: "Timeout for command execution in seconds (optional, defaults to 30)."
           required: ["command"]
 
-  # VERL File Reader Tool
+  # File Reader Tool
   - class_name: "verl.tools.readfile_tool.FileReaderTool"
     config:
       type: native
@@ -103,14 +103,39 @@ tools:
       type: "function"
       function:
         name: "read_file"
-        description: "Read files from the hyperswitch project directory using relative paths. Can read specific number of lines from the beginning of the file."
+        description: "Read files from the project directory using relative paths. Can read specific number of lines from the beginning of the file."
         parameters:
           type: "object"
           properties:
             filepath:
               type: "string"
-              description: "Relative path to the file from hyperswitch (e.g., 'hyperswitch/tools/base_tool.py', 'README.md')"
+              description: "Relative path to the file from pwd (e.g., 'verl/tools/base_tool.py', 'README.md')"
             num_lines:
               type: "integer"
               description: "Number of lines to read from the beginning of the file (optional, defaults to entire file)"
           required: ["filepath"]
+
+  # File Edit Tool
+  - class_name: "verl.tools.file_edit_tool.FileEditTool"
+    config:
+      type: native
+      max_file_size: 10485760  # 10MB
+      create_backup: true
+    tool_schema:
+      type: "function"
+      function:
+        name: "edit_file"
+        description: "Edit a file by replacing old_string with new_string. Replaces the first occurrence only. Creates a backup file automatically."
+        parameters:
+          type: "object"
+          properties:
+            filepath:
+              type: "string"
+              description: "Relative path to the file (e.g., 'verl/tools/base_tool.py')"
+            old_string:
+              type: "string"
+              description: "The exact string to replace"
+            new_string:
+              type: "string"
+              description: "The new string to insert"
+          required: ["filepath", "old_string", "new_string"]

@@ -62,7 +62,7 @@ class BashTool(BaseTool):
             type="function",
             function=OpenAIFunctionSchema(
                 name="verl_bash",
-                description=f"Execute bash commands in the hyperswitch directory already in the pwd project directory ({self.verl_pwd}). Returns command output or error messages.",
+                description=f"Execute bash commands",
                 parameters=OpenAIFunctionParametersSchema(
                     type="object",
                     properties={

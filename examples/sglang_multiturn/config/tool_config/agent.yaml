@@ -64,6 +64,9 @@ tools:
         - "awk"
         - "sort"
         - "uniq"
+        - "file"
+        - "sed"
+        - "uv"
     tool_schema:
       type: "function"
       function:
@@ -99,6 +102,9 @@ tools:
         - ".ini"
         - ".toml"
         - ".log"
+        - ".rs"
+        - ".js"
+        - ".*"
     tool_schema:
       type: "function"
       function:
@@ -109,7 +115,7 @@ tools:
           properties:
             filepath:
               type: "string"
-              description: "Relative path to the file from pwd (e.g., 'verl/tools/base_tool.py', 'README.md')"
+              description: "Relative path to the file from pwd (e.g., 'main.rs', 'README.md')"
             num_lines:
               type: "integer"
               description: "Number of lines to read from the beginning of the file (optional, defaults to entire file)"
@@ -131,7 +137,7 @@ tools:
           properties:
             filepath:
               type: "string"
-              description: "Relative path to the file (e.g., 'verl/tools/base_tool.py')"
+              description: "Relative path to the file (e.g., 'main.rs')"
             old_string:
               type: "string"
               description: "The exact string to replace"

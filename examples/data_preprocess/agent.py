@@ -15,16 +15,68 @@
 # limitations under the License.
 """
 Generate synthetic coding agent tasks for software engineering training
+Extract real issues from GitHub repositories
 """
 
 import argparse
 import os
 import random
+import json
+import urllib.request
+import urllib.error
 
 import datasets
 from datasets import Dataset
 
 from verl.utils.hdfs_io import copy, makedirs
+
+
+def fetch_github_issues(repo_owner, repo_name, max_issues=100, state="all"):
+    """Fetch issues from a GitHub repository using the GitHub API"""
+    issues = []
+    page = 1
+    per_page = 100
+
+    while len(issues) < max_issues:
+        url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/issues"
+        url += f"?state={state}&per_page={per_page}&page={page}"
+
+        try:
+            req = urllib.request.Request(url)
+            req.add_header('Accept', 'application/vnd.github.v3+json')
+
+            with urllib.request.urlopen(req, timeout=30) as response:
+                data = json.loads(response.read().decode())
+
+                if not data:
+                    break
+
+                # Filter out pull requests (they appear in issues endpoint)
+                for item in data:
+                    if 'pull_request' not in item:
+                        issues.append({
+                            'number': item['number'],
+                            'title': item['title'],
+                            'body': item.get('body', ''),
+                            'state': item['state'],
+                            'labels': [label['name'] for label in item.get('labels', [])],
+                            'created_at': item['created_at'],
+                            'url': item['html_url']
+                        })
+
+                        if len(issues) >= max_issues:
+                            break
+
+                page += 1
+
+        except urllib.error.HTTPError as e:
+            print(f"HTTP Error fetching issues: {e.code} - {e.reason}")
+            break
+        except Exception as e:
+            print(f"Error fetching issues: {e}")
+            break
+
+    return issues
 
 
 # Comprehensive SWE task questions
@@ -48,7 +100,7 @@ SWE_TASKS = [
     
     # Code analysis tasks
     {
-        "question": "Find all Python files in the src/ directory, read the main modules, and create a summary of the codebase structure and key components.",
+        "question": "Find all rust files in the src/ directory, read the main modules, and create a summary of the codebase structure and key components.",
         "ground_truth": "codebase_structure_analysis",
         "requires_editing": False
     },
@@ -92,7 +144,7 @@ SWE_TASKS = [
         "requires_editing": True
     },
     {
-        "question": "Find Python files with hardcoded localhost URLs. Read one such file and replace 'http://localhost' with 'http://0.0.0.0' using edit_file.",
+        "question": "Find rust files with hardcoded localhost URLs. Read one such file and replace 'http://localhost' with 'http://0.0.0.0' using edit_file.",
         "ground_truth": "configuration_fix",
         "requires_editing": True
     },
@@ -153,23 +205,43 @@ if __name__ == "__main__":
     parser.add_argument("--hdfs_dir", default=None)
     parser.add_argument("--local_save_dir", default="~/data/swe_agent", help="The save directory for the preprocessed dataset.")
     parser.add_argument("--num_samples", type=int, default=200, help="Number of samples to generate")
+    parser.add_argument("--github_repo", default="juspay/hyperswitch", help="GitHub repo in format owner/name")
+    parser.add_argument("--use_github_issues", action="store_true", help="Use real GitHub issues instead of synthetic tasks")
+    parser.add_argument("--max_github_issues", type=int, default=100, help="Maximum GitHub issues to fetch")
 
     args = parser.parse_args()
 
-    data_source = "synthetic/repo_exploration"
+    # Fetch GitHub issues if requested
+    github_issues = []
+    if args.use_github_issues:
+        owner, repo = args.github_repo.split('/')
+        print(f"Fetching issues from {owner}/{repo}...")
+        github_issues = fetch_github_issues(owner, repo, max_issues=args.max_github_issues)
+        print(f"Fetched {len(github_issues)} issues from GitHub")
 
-    # Generate synthetic dataset by repeating questions
+    data_source = "github_issues" if args.use_github_issues else "synthetic/repo_exploration"
+
+    # Generate dataset
     train_data = []
     test_data = []
-    
+
     for i in range(args.num_samples):
-        task_data = random.choice(SWE_TASKS)
+        # Use GitHub issue or synthetic task
+        if args.use_github_issues and github_issues:
+            issue = random.choice(github_issues)
+            task_data = {
+                "question": f"Analyze and resolve GitHub issue #{issue['number']}: {issue['title']}\n\nDescription: {issue['body'][:500] if issue['body'] else 'No description provided'}",
+                "ground_truth": f"github_issue_{issue['number']}",
+                "requires_editing": 'bug' in [l.lower() for l in issue['labels']] or 'enhancement' in [l.lower() for l in issue['labels']]
+            }
+        else:
+            task_data = random.choice(SWE_TASKS)
         
         # System prompt based on whether editing is required
         if task_data["requires_editing"]:
             system_content = (
                 "You are an experienced software engineer and coding agent. Your role is to systematically analyze codebases and make precise, safe edits.\n\n"
-                
+                "This is a rust repository  most files are in rust , always start with todo_write tool to plan your approach.\n\n"
                 "## Your Working Style:\n"
                 "- **Plan first**: Create a todo list outlining investigation and editing steps\n"
                 "- **Read before edit**: ALWAYS read a file completely using read_file BEFORE using edit_file\n"
@@ -197,7 +269,7 @@ if __name__ == "__main__":
                 "You are an experienced software engineer specializing in code analysis and architecture review.\n\n"
                 
                 "## Your Working Style:\n"
-                "- **Be methodical**: Break complex analysis into clear steps\n"
+                "- **Be methodical**: Break complex analysis into clear steps use the todo tool first\n"
                 "- **Use tools effectively**: Leverage bash for exploration and read_file for detailed analysis\n"
                 "- **Document findings**: Use todo_manager to track investigation progress\n"
                 "- **Provide insights**: Deliver clear, actionable analysis\n\n"

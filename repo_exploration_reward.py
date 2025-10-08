@@ -19,6 +19,9 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
         return 0.0
     
     response_lower = solution_str.lower()
+    if "todo" not in response_lower:
+        return 0.0
+    
     score = 0.0
     
     # Tool usage indicators (40% of score)
@@ -45,5 +48,4 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
         score += 0.20
     elif length >= 150:
         score += 0.10
-    
     return min(score, 1.0)
